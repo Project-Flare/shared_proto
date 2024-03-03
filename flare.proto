@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+// Registration form submission
+message RegisterUserRequest {
+    string username = 1;
+    string password = 2;
+}
+
+// Login form submission
+message AuthUserRequest {
+    string username = 1;
+    string password = 2;
+}
+
+// Protocol messages originating from the client intended for the server
+message FlareClientMessage {
+    oneof flare_client_message {
+        RegisterUserRequest register_user_request = 1;
+        AuthUserRequest auth_user_request = 2;
+    }
+}
+
+
+// Registration form accepted, issued session key
+message RegisterUserAccept {
+    string session_key = 1;
+}
+
+enum RegisterUserRefuseReason {
+    UNSPECIFIED = 0;
+
+    USERNAME_OCCUPIED = 1;
+    USERNAME_HAS_INVALID_SYMBOLS = 2;
+    USERNAME_TOO_SHORT = 3;
+    USERNAME_TOO_LONG = 4;
+
+    PASSWORD_WEAK = 5;
+    PASSWORD_TOO_LONG = 6;
+}
+
+// Registration form rejected
+message RegisterUserRefuse {
+    RegisterUserRefuseReason reason = 1;
+}
+
+// Login form accepted
+message AuthUserAccept {
+    string session_key = 1;
+}
+
+// Protocol messages originating from the server intended for a client
+message FlareServerMessage {
+    oneof flare_server_message {
+        RegisterUserAccept register_user_accept = 1;
+        RegisterUserRefuse register_user_refuse = 2;
+        AuthUserAccept auth_user_accept = 3;
+    }
+}
